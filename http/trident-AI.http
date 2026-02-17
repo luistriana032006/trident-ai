@@ -1,0 +1,23 @@
+### Variables
+@baseUrl = http://localhost:8000
+
+### Test 1: Info del servicio (GET /)
+GET {{baseUrl}}/
+Accept: application/json
+
+###
+
+### Test 2: Health Check
+GET {{baseUrl}}/health
+
+###
+
+### Test 3: Chat - Modo Local
+POST {{baseUrl}}/chat
+Content-Type: application/json
+
+{
+  "mode": "local",
+  "prompt": "generame un ejemplo de un hola mundo en python"
+}
+

@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+venv/
+venv_trindentIA/
+env/
+*.pyc
+
+# Java
+target/
+*.class
+.mvn/
+.idea/
+*.iml
+
+# Node
+node_modules/
+dist/
+.env.local
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+/apuntes
