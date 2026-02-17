@@ -24,15 +24,6 @@ Sistema de búsqueda inteligente que combina IA local con búsqueda web.
 
 **Versión:** 1.0.0  
 **Autor:** Luis Miguel Triana Rueda
-"@ | Out-File -FilePath README.md -Encoding UTF8
-```
-
----
-
-## **✅ CHECKLIST - Ejecuta y confirma:**
-```
-Cuando termines de ejecutar esos comandos, deberías tener:
-
 📁 trident-ai/
   ├── 📁 backend-python/    (vacío)
   ├── 📁 backend-spring/    (vacío)
