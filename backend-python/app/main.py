@@ -38,16 +38,13 @@ async def health():
 
 @app.post("/chat",response_model=ChatResponse)
 async def chat(request:chatRequest):
-    # MOKEAREMOS POR EL MOMENTO
-
     ## mapeo del modo a modelo
     model_map ={
         "local": "deepseek-r1:8b",
         "entity":"qwen2.5:1.5b",
         "search":"qwen2.5:7b"
-
     }
-
+    
     # selecccionar el modelo segun modo
     model = model_map[request.mode]
     

@@ -17,7 +17,7 @@ POST {{baseUrl}}/chat
 Content-Type: application/json
 
 {
-  "mode": "local",
-  "prompt": "generame un ejemplo de un hola mundo en python"
+  "mode": "search",
+  "prompt": "qwen que sabes de colombia??"
 }
 

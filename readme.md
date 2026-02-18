@@ -1,4 +1,4 @@
-@"
+
 # 🔱 Trident-AI
 
 Sistema de búsqueda inteligente que combina IA local con búsqueda web.

@@ -17,8 +17,11 @@ class ollama_client:
         Returns:
             Diccionario con la respuesta del modelo
         """
-    
-     async with httpx.AsyncClient(timeout=60.0) as client:
+        ## forzar el español en todos los modelos
+
+     prompt = f"Responde siempre en español. \n\nPregunta:{prompt}"
+
+     async with httpx.AsyncClient(timeout=120.0) as client:
             response = await client.post(
                 f"{self.base_url}/api/generate",
                 json={
