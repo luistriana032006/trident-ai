@@ -44,7 +44,7 @@ async def chat(request:chatRequest):
         "entity":"qwen2.5:1.5b",
         "search":"qwen2.5:7b"
     }
-    
+
     # selecccionar el modelo segun modo
     model = model_map[request.mode]
     
@@ -58,6 +58,5 @@ async def chat(request:chatRequest):
         mode=request.mode,
         response=ollama_response["response"], ## respuesta real del modelo
         model_used= model
-
-
     )
+
