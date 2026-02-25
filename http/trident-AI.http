@@ -18,6 +18,6 @@ Content-Type: application/json
 
 {
   "mode": "search",
-  "prompt": "qwen que sabes de colombia??"
+  "prompt": "qwen que presentate dime quien eres y de quien eres??"
 }
 
