@@ -86,17 +86,18 @@ class ChatService:
         finally:
             db.close()
 
-def get_chat_history(self,limit:int = 10):
-    """ontiene el historial de chats"""
+    def get_chat_history(self, limit: int = 10):
+        """obtiene el historial de chats"""
 
-    db= SessionLocal()
+        db = SessionLocal()
 
-    try:
-        messages = db.query(ChatMessage)\
-        .order_by(ChatMessage.timestamp.desc())\
-        .all()
+        try:
+            messages = db.query(ChatMessage)\
+                .order_by(ChatMessage.timestamp.desc())\
+                .limit(limit)\
+                .all()
 
-        return messages
-    
-    finally:
-        db.close()
+            return messages
+
+        finally:
+            db.close()
