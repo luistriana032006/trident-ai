@@ -15,10 +15,13 @@ target/
 .idea/
 *.iml
 
-# Node
+# Node / Next.js
 node_modules/
 dist/
+.next/
+out/
 .env.local
+.env*.local
 build/
 
 # OS

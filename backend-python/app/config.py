@@ -9,4 +9,4 @@ class Settings(BaseSettings):
         env_file_encoding = "utf-8"
 
 
-Settings = Settings()
+settings = Settings()

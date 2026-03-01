@@ -12,12 +12,55 @@ GET {{baseUrl}}/health
 
 ###
 
-### Test 3: Chat - Modo Local
+### Test 3: Chat - Modo LOCAL (deepseek-r1:8b) — sin internet
+POST {{baseUrl}}/chat
+Content-Type: application/json
+
+{
+  "mode": "local",
+  "prompt": "hola deepseek, preséntate y dime qué puedes hacer en dos párrafos"
+}
+
+###
+
+### Test 4: Chat - Modo ENTITY (qwen2.5:1.5b) — Bing Entity API
+POST {{baseUrl}}/chat
+Content-Type: application/json
+
+{
+  "mode": "entity",
+  "prompt": "¿Quién es Elon Musk?"
+}
+
+###
+
+### Test 5: Chat - Modo SEARCH (qwen2.5:7b) — Bing Web Search
 POST {{baseUrl}}/chat
 Content-Type: application/json
 
 {
   "mode": "search",
-  "prompt": "qwen que presentate dime quien eres y de quien eres??"
+  "prompt": "Novedades de inteligencia artificial en 2025"
 }
 
+###
+
+### Test 6: Historial de conversaciones
+GET {{baseUrl}}/history?limit=5
+
+###
+
+### Test 7: Estadísticas de uso
+GET {{baseUrl}}/stats
+
+###
+
+### Test 8: Exportar historial completo a Markdown
+GET {{baseUrl}}/export/history?limit=10
+
+###
+
+### Test 9: Exportar chat individual a Markdown (cambia el ID)
+GET {{baseUrl}}/export/chat/1
+
+###

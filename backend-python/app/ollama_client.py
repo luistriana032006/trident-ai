@@ -1,10 +1,10 @@
 import httpx
 from typing import Dict, Any 
-from app.config import Settings
+from app.config import settings
 
 class ollama_client:
     def __init__(self):
-        self.base_url = Settings.OLLAMA_BASE_URL
+        self.base_url = settings.OLLAMA_BASE_URL
 
     async def generate(self, model: str, prompt: str) -> Dict[str,Any]:
      """
