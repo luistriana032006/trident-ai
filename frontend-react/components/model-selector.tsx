@@ -1,14 +1,14 @@
 "use client"
 
 import { useState, useRef, useEffect, useCallback } from "react"
-import { Cpu, Globe, HardDrive, Settings2, PanelRight } from "lucide-react"
+import { Cpu, Globe, HardDrive, Settings2, PanelRight, PanelLeft, Plus, MessageSquare } from "lucide-react"
 import { TridentLogo } from "@/components/trident-logo"
 import { ModelDropdown, type ModelOption } from "@/components/model-dropdown"
 import { ChatInput } from "@/components/chat-input"
 import { ChatMessage } from "@/components/chat-message"
 import { ReferencesPanel, type SearchReference } from "@/components/references-panel"
 import { cn } from "@/lib/utils"
-
+  
 const models: ModelOption[] = [
   {
     id: "entity",
@@ -123,6 +123,26 @@ interface Message {
   references?: SearchReference[]
 }
 
+interface ChatSession {
+  id: string
+  title: string
+  messages: Message[]
+  modelId: string
+  createdAt: number
+}
+
+function formatRelativeTime(timestamp: number): string {
+  const diff = Date.now() - timestamp
+  const minutes = Math.floor(diff / 60000)
+  const hours = Math.floor(diff / 3600000)
+  const days = Math.floor(diff / 86400000)
+  if (minutes < 1) return "just now"
+  if (minutes < 60) return `${minutes}m ago`
+  if (hours < 24) return `${hours}h ago`
+  if (days === 1) return "yesterday"
+  return `${days}d ago`
+}
+
 const welcomeSuggestions = [
   "Explain how transformers work in neural networks",
   "Extract all entities from a paragraph of text",
@@ -132,15 +152,17 @@ const welcomeSuggestions = [
 
 export function ModelSelector() {
   const [selectedModel, setSelectedModel] = useState("entity")
-  const [messages, setMessages] = useState<Message[]>([])
+  const [sessions, setSessions] = useState<ChatSession[]>([])
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [showReferences, setShowReferences] = useState(false)
-  const [activeReferences, setActiveReferences] = useState<SearchReference[]>(
-    []
-  )
+  const [activeReferences, setActiveReferences] = useState<SearchReference[]>([])
+  const [sidebarOpen, setSidebarOpen] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const selected = models.find((m) => m.id === selectedModel)!
 
+  const currentSession = sessions.find((s) => s.id === activeSessionId)
+  const messages = currentSession?.messages ?? []
   const showsReferences = selectedModel === "search" || selectedModel === "entity"
 
   const scrollToBottom = useCallback(() => {
@@ -151,14 +173,61 @@ export function ModelSelector() {
     scrollToBottom()
   }, [messages, scrollToBottom])
 
+  const handleNewChat = () => {
+    setActiveSessionId(null)
+    setIsLoading(false)
+    setShowReferences(false)
+    setActiveReferences([])
+  }
+
+  const handleSelectSession = (sessionId: string) => {
+    const session = sessions.find((s) => s.id === sessionId)
+    if (!session) return
+    setActiveSessionId(sessionId)
+    setIsLoading(false)
+    setSelectedModel(session.modelId)
+    const lastWithRefs = [...session.messages]
+      .reverse()
+      .find((m) => m.references && m.references.length > 0)
+    if (lastWithRefs?.references?.length) {
+      setActiveReferences(lastWithRefs.references)
+      setShowReferences(true)
+    } else {
+      setShowReferences(false)
+      setActiveReferences([])
+    }
+  }
+
   const handleSend = (content: string) => {
+    let sessionId = activeSessionId
+
+    if (!sessionId) {
+      sessionId = `session-${Date.now()}`
+      const newSession: ChatSession = {
+        id: sessionId,
+        title: content.slice(0, 60),
+        messages: [],
+        modelId: selectedModel,
+        createdAt: Date.now(),
+      }
+      setSessions((prev) => [newSession, ...prev])
+      setActiveSessionId(sessionId)
+    }
+
     const userMessage: Message = {
       id: `user-${Date.now()}`,
       role: "user",
       content,
       modelId: selectedModel,
     }
-    setMessages((prev) => [...prev, userMessage])
+
+    setSessions((prev) =>
+      prev.map((s) =>
+        s.id === sessionId
+          ? { ...s, messages: [...s.messages, userMessage] }
+          : s
+      )
+    )
     setIsLoading(true)
 
     setTimeout(() => {
@@ -188,7 +257,13 @@ export function ModelSelector() {
         modelId: selectedModel,
         references: refs.length > 0 ? refs : undefined,
       }
-      setMessages((prev) => [...prev, assistantMessage])
+      setSessions((prev) =>
+        prev.map((s) =>
+          s.id === sessionId
+            ? { ...s, messages: [...s.messages, assistantMessage] }
+            : s
+        )
+      )
       setIsLoading(false)
     }, 1500)
   }
@@ -201,6 +276,13 @@ export function ModelSelector() {
       <header className="shrink-0 border-b border-border/50 bg-card/80 backdrop-blur-md">
         <div className="mx-auto flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/50 bg-secondary/40 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              aria-label="Toggle sidebar"
+            >
+              <PanelLeft className="h-3.5 w-3.5" />
+            </button>
             <TridentLogo className="h-8 w-8" />
             <div className="flex flex-col">
               <span className="text-sm font-bold tracking-tight text-foreground">
@@ -268,8 +350,74 @@ export function ModelSelector() {
         </div>
       </header>
 
-      {/* Main content area with optional side panel */}
+      {/* Main content area with side panels */}
       <div className="flex flex-1 overflow-hidden">
+        {/* Left sidebar - recent chats */}
+        <aside
+          className={cn(
+            "flex shrink-0 flex-col border-r border-border/50 bg-card/50 transition-all duration-300 overflow-hidden",
+            sidebarOpen ? "w-60" : "w-0"
+          )}
+        >
+          <div className="p-3">
+            <button
+              onClick={handleNewChat}
+              className="flex w-full items-center gap-2 rounded-lg border border-border/60 bg-secondary/40 px-3 py-2 text-sm text-muted-foreground transition-all hover:bg-secondary hover:text-foreground"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              <span>New Chat</span>
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto px-2 pb-3">
+            {sessions.length === 0 ? (
+              <div className="flex flex-col items-center gap-2 px-3 py-8 text-center">
+                <MessageSquare className="h-8 w-8 text-muted-foreground/30" />
+                <p className="text-xs text-muted-foreground/50">No recent chats</p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-0.5">
+                <p className="px-2 py-1.5 text-[10px] font-medium uppercase tracking-widest text-muted-foreground/50">
+                  Recent
+                </p>
+                {sessions.map((session) => {
+                  const sessionModel = models.find((m) => m.id === session.modelId)
+                  const isActive = session.id === activeSessionId
+                  return (
+                    <button
+                      key={session.id}
+                      onClick={() => handleSelectSession(session.id)}
+                      className={cn(
+                        "flex w-full flex-col gap-0.5 rounded-lg px-3 py-2 text-left transition-all",
+                        isActive
+                          ? "bg-secondary text-foreground"
+                          : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
+                      )}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        {sessionModel && (
+                          <sessionModel.icon
+                            className="h-3 w-3 shrink-0"
+                            style={{
+                              color: isActive ? sessionModel.accentColor : undefined,
+                            }}
+                          />
+                        )}
+                        <span className="truncate text-xs font-medium">
+                          {session.title}
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-muted-foreground/50">
+                        {formatRelativeTime(session.createdAt)}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        </aside>
+
         {/* Chat area */}
         <main className="flex flex-1 flex-col overflow-hidden">
           <div className="flex-1 overflow-y-auto">

@@ -115,9 +115,14 @@ export function ChatInput({ onSend, isLoading, modelName, modelAccent }: ChatInp
         </div>
       </div>
 
-      <p className="mt-2 text-center text-[11px] text-muted-foreground/40">
-        Trident AI runs models locally. Your data never leaves your device.
-      </p>
+      <div className="mt-2 flex flex-col items-center gap-0.5">
+        <p className="text-center text-[11px] text-muted-foreground/40">
+          Trident AI runs models locally. Your data never leaves your device.
+        </p>
+        <p className="text-center text-[11px] text-muted-foreground/40">
+          Trident AI can make mistakes. Review responses carefully before acting on them.
+        </p>
+      </div>
     </div>
   )
 }
