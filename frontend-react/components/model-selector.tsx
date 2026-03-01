@@ -39,81 +39,6 @@ const models: ModelOption[] = [
   },
 ]
 
-// Simulated Bing search references for Search mode
-const searchReferences: Record<string, SearchReference[]> = {
-  default: [
-    {
-      id: "ref-1",
-      title: "Understanding Large Language Models: A Comprehensive Guide",
-      url: "https://learn.microsoft.com/en-us/ai/large-language-models",
-      domain: "learn.microsoft.com",
-      snippet:
-        "Large Language Models (LLMs) are deep learning models trained on massive text datasets. They can generate, classify, and summarize text with remarkable accuracy.",
-    },
-    {
-      id: "ref-2",
-      title: "Qwen 2.5 Technical Report - Model Architecture and Training",
-      url: "https://arxiv.org/abs/2024.qwen25",
-      domain: "arxiv.org",
-      snippet:
-        "Qwen 2.5 introduces improved attention mechanisms and a more efficient tokenizer, resulting in better performance on benchmark tasks while reducing computational overhead.",
-    },
-    {
-      id: "ref-3",
-      title: "Local AI Deployment Best Practices - Microsoft Azure",
-      url: "https://azure.microsoft.com/en-us/solutions/local-ai",
-      domain: "azure.microsoft.com",
-      snippet:
-        "Learn how to deploy AI models locally for improved privacy, reduced latency, and better control over your data with on-premise solutions.",
-    },
-    {
-      id: "ref-4",
-      title: "Semantic Search Implementation with Transformer Models",
-      url: "https://www.microsoft.com/en-us/research/semantic-search",
-      domain: "microsoft.com",
-      snippet:
-        "Semantic search leverages transformer-based embeddings to understand query intent, delivering more relevant results compared to traditional keyword matching.",
-    },
-    {
-      id: "ref-5",
-      title: "Vector Database Comparison: Qdrant vs Pinecone vs Weaviate",
-      url: "https://techcommunity.microsoft.com/vector-databases-comparison",
-      domain: "techcommunity.microsoft.com",
-      snippet:
-        "A detailed comparison of popular vector databases for AI applications, including performance benchmarks, pricing, and integration capabilities.",
-    },
-  ],
-}
-
-// Simulated Entity references
-const entityReferences: Record<string, SearchReference[]> = {
-  default: [
-    {
-      id: "ent-1",
-      title: "Named Entity Recognition with Modern LLMs - Bing Research",
-      url: "https://www.microsoft.com/en-us/research/ner-llms",
-      domain: "microsoft.com",
-      snippet:
-        "Modern approaches to NER using large language models, including zero-shot and few-shot entity extraction techniques for production systems.",
-    },
-    {
-      id: "ent-2",
-      title: "Entity Extraction API - Microsoft Cognitive Services",
-      url: "https://learn.microsoft.com/en-us/azure/cognitive-services/entity-extraction",
-      domain: "learn.microsoft.com",
-      snippet:
-        "Extract named entities from unstructured text, including people, places, organizations, quantities, and more using Azure AI Language services.",
-    },
-    {
-      id: "ent-3",
-      title: "Knowledge Graph Construction from Text Documents",
-      url: "https://arxiv.org/abs/2024.knowledge-graphs",
-      domain: "arxiv.org",
-      snippet:
-        "Techniques for building knowledge graphs from text using entity recognition and relation extraction, enabling structured knowledge representation.",
-    },
-  ],
-}
 
 interface Message {
   id: string
@@ -198,7 +123,7 @@ export function ModelSelector() {
     }
   }
 
-  const handleSend = (content: string) => {
+  const handleSend = async (content: string) => {
     let sessionId = activeSessionId
 
     if (!sessionId) {
@@ -230,22 +155,28 @@ export function ModelSelector() {
     )
     setIsLoading(true)
 
-    setTimeout(() => {
-      let refs: SearchReference[] = []
-      let response = ""
+    const endpoints: Record<string, string> = {
+      local: "http://localhost:8080/api/chat/local",
+      entity: "http://localhost:8080/api/chat/entity",
+      search: "http://localhost:8080/api/chat/search",
+    }
 
-      if (selectedModel === "search") {
-        refs = searchReferences.default
-        response = `[Search Mode - Qwen 2.5 7B]\n\nI searched the web for relevant information about your query. Here's what I found:\n\nBased on ${refs.length} sources retrieved via Bing Search, I can provide you with comprehensive information about "${content.slice(0, 60)}${content.length > 60 ? "..." : ""}".\n\nThe search results indicate several key findings from authoritative sources including Microsoft Learn, ArXiv, and Azure documentation. You can review all referenced sources in the panel on the right.`
-        setActiveReferences(refs)
-        setShowReferences(true)
-      } else if (selectedModel === "entity") {
-        refs = entityReferences.default
-        response = `[Entity Mode - Qwen 2.5 2B]\n\nI've analyzed your input and extracted the following entities using contextual references:\n\nProcessing with the Entity model, I identified relevant entities and cross-referenced them with ${refs.length} knowledge sources via Bing Search.\n\nQuery analyzed: "${content.slice(0, 60)}${content.length > 60 ? "..." : ""}"\n\nRelevant entity sources are available in the references panel.`
+    try {
+      const res = await fetch(endpoints[selectedModel], {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: content, sessionId }),
+      })
+
+      if (!res.ok) throw new Error(`Server error: ${res.status}`)
+
+      const data = await res.json()
+      const refs: SearchReference[] = data.references ?? []
+
+      if (refs.length > 0) {
         setActiveReferences(refs)
         setShowReferences(true)
       } else {
-        response = `[Local Mode - DeepSeek R1 8B]\n\nThinking through this step by step...\n\nThe DeepSeek R1 8B model excels at complex reasoning and code generation. All processing happens entirely on-device with zero data transmission.\n\nAnalyzing: "${content.slice(0, 80)}${content.length > 80 ? "..." : ""}"`
         setShowReferences(false)
         setActiveReferences([])
       }
@@ -253,7 +184,7 @@ export function ModelSelector() {
       const assistantMessage: Message = {
         id: `assistant-${Date.now()}`,
         role: "assistant",
-        content: response,
+        content: data.response,
         modelId: selectedModel,
         references: refs.length > 0 ? refs : undefined,
       }
@@ -264,8 +195,23 @@ export function ModelSelector() {
             : s
         )
       )
+    } catch (err) {
+      const assistantMessage: Message = {
+        id: `error-${Date.now()}`,
+        role: "assistant",
+        content: `Could not reach backend: ${err instanceof Error ? err.message : "Unknown error"}`,
+        modelId: selectedModel,
+      }
+      setSessions((prev) =>
+        prev.map((s) =>
+          s.id === sessionId
+            ? { ...s, messages: [...s.messages, assistantMessage] }
+            : s
+        )
+      )
+    } finally {
       setIsLoading(false)
-    }, 1500)
+    }
   }
 
   const hasMessages = messages.length > 0
