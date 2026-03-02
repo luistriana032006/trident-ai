@@ -1,6 +1,8 @@
 
 # 🔱 Trident-AI
 
+![Trident-AI](img/portada.png)
+
 Sistema de búsqueda inteligente que combina IA local con búsqueda web.
 
 ## Estado del Proyecto
