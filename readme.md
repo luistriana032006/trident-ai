@@ -11,14 +11,14 @@ Sistema de búsqueda inteligente que combina IA local con búsqueda web.
 
 - \`backend-python/\` - Servicio FastAPI (puerto 8000)
 - \`backend-spring/\` - Orquestador Spring Boot (puerto 8080)
-- \`frontend-react/\` - Interfaz React (puerto 5173)
+- \`frontend-react/\` - Interfaz Next.js (puerto 3000)
 
 ## Próximos Pasos
 
 - [ ] Backend Python básico
 - [ ] Integración con Ollama
 - [ ] Backend Spring Boot
-- [ ] Frontend React
+- [ ] Frontend Next.js
 
 ---
 
@@ -27,7 +27,7 @@ Sistema de búsqueda inteligente que combina IA local con búsqueda web.
 📁 trident-ai/
   ├── 📁 backend-python/    (vacío)
   ├── 📁 backend-spring/    (vacío)
-  ├── 📁 frontend-react/    (vacío)
+  ├── 📁 frontend-react/    (Next.js)
   ├── 📁 docs/              (vacío)
   ├── 📄 .gitignore         (con contenido)
   ├── 📄 README.md          (con contenido)
