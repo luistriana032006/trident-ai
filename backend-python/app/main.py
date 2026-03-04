@@ -32,7 +32,7 @@ app = FastAPI(
 chat_service = ChatService()
 markdown_exporter = MarkdownExporter()
 
-# CORS para que react pueda llamar
+# CORS para que Next.js pueda llamar
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],
