@@ -18,7 +18,7 @@ Content-Type: application/json
 
 {
   "mode": "local",
-  "prompt": "hola deepseek, preséntate y dime qué puedes hacer en dos párrafos"
+  "prompt": "hola deepseek, preséntate y dime qué puedes hacer en un parrafo"
 }
 
 ###
