@@ -25,6 +25,9 @@ out/
 build/
 next-env.d.ts
 pnpm-lock.yaml
+placeholder*.jpg
+placeholder*.png
+placeholder*.svg
 
 # OS
 .DS_Store
