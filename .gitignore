@@ -23,6 +23,8 @@ out/
 .env.local
 .env*.local
 build/
+next-env.d.ts
+pnpm-lock.yaml
 
 # OS
 .DS_Store
