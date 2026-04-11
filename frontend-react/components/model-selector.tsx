@@ -84,7 +84,7 @@ export function ModelSelector() {
   const [activeReferences, setActiveReferences] = useState<SearchReference[]>([])
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const selected = models.find((m) => m.id === selectedModel)!
+  const selected = models.find((m) => m.id === selectedModel) ?? models[0]
 
   const currentSession = sessions.find((s) => s.id === activeSessionId)
   const messages = currentSession?.messages ?? []
@@ -170,7 +170,13 @@ export function ModelSelector() {
 
       if (!res.ok) throw new Error(`Server error: ${res.status}`)
 
+      const contentType = res.headers.get("content-type")
+      if (!contentType?.includes("application/json")) {
+        throw new Error("Backend returned an unexpected response format")
+      }
+
       const data = await res.json()
+      const responseText: string = data.response ?? ""
       const refs: SearchReference[] = data.references ?? []
 
       if (refs.length > 0) {
@@ -184,7 +190,7 @@ export function ModelSelector() {
       const assistantMessage: Message = {
         id: `assistant-${Date.now()}`,
         role: "assistant",
-        content: data.response,
+        content: responseText || "(empty response from backend)",
         modelId: selectedModel,
         references: refs.length > 0 ? refs : undefined,
       }
