@@ -84,7 +84,7 @@ export function ModelSelector() {
   const [activeReferences, setActiveReferences] = useState<SearchReference[]>([])
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const selected = models.find((m) => m.id === selectedModel) ?? models[0]
+  const selected = models.find((m) => m.id === selectedModel)!
 
   const currentSession = sessions.find((s) => s.id === activeSessionId)
   const messages = currentSession?.messages ?? []
