@@ -1,7 +1,14 @@
 package com.luistriana.trident.ia.model;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum Mode {
     LOCAL,
     ENTITY,
-    SEARCH
+    SEARCH;
+
+    @JsonValue
+    public String toJson() {
+        return name().toLowerCase();
+    }
 }

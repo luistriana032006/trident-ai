@@ -165,7 +165,7 @@ export function ModelSelector() {
       const res = await fetch(endpoints[selectedModel], {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: content, sessionId }),
+        body: JSON.stringify({ prompt: content }),
       })
 
       if (!res.ok) throw new Error(`Server error: ${res.status}`)

@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChatRequest {
 
-    private Mode mode;
     private String prompt;
 
 }
