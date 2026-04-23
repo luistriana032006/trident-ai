@@ -99,4 +99,4 @@ BRAVE_SEARCH_API_KEY=tu_key  # Para modo Search (V2)
 
 **Autor:** Luis Miguel Triana Rueda  
 **Versión:** 1.0.0  
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-luis--triana-blue)](https://www.linkedin.com/in/luis-triana-2917202a2/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Luis%20Miguel%20Triana-blue?logo=linkedin)](https://www.linkedin.com/in/luis-miguel-triana-rueda-2917202a2/)
