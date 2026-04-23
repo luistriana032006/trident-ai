@@ -3,6 +3,8 @@
 import { cn } from "@/lib/utils"
 import { User } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
 
 interface ChatMessageProps {
   role: "user" | "assistant"
@@ -62,7 +64,11 @@ export function ChatMessage({
               : "bg-secondary text-secondary-foreground"
           )}
         >
-          <p className="whitespace-pre-wrap">{content}</p>
+          <div className="chat-markdown">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {content}
+            </ReactMarkdown>
+          </div>
           {isStreaming && (
             <span className="ml-1 inline-block h-4 w-1.5 animate-pulse rounded-full bg-primary" />
           )}

@@ -139,7 +139,7 @@ export function ReferencesPanel({
         </div>
       </div>
 
-      {/* Bing attribution footer */}
+      {/* Brave attribution footer */}
       <div className="border-t border-border/50 px-4 py-3">
         <div className="flex items-center gap-2.5 rounded-lg bg-secondary/40 px-3 py-2.5">
           <svg
@@ -149,26 +149,21 @@ export function ReferencesPanel({
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              d="M5 3v16.5l4.67-2.25 5.33 3.25 4-2V5.5L15 8.5l-5.33-3.25L5 3z"
-              fill={modelAccent}
-              opacity="0.8"
+              d="M12 2L4 5.5v5c0 4.5 3.4 8.7 8 9.5 4.6-.8 8-5 8-9.5v-5L12 2z"
+              fill="#FB542B"
             />
             <path
-              d="M5 3l4.67 2.25v11L5 19.5V3z"
-              fill={modelAccent}
-            />
-            <path
-              d="M9.67 5.25L15 8.5v11l-5.33-3.25v-11z"
-              fill={modelAccent}
-              opacity="0.6"
+              d="M10 8h4v1.5l-.8 3H10.8L10 9.5V8z"
+              fill="white"
+              opacity="0.9"
             />
           </svg>
           <div className="flex flex-col">
             <span className="text-[10px] font-semibold text-foreground/80">
-              Powered by Microsoft Bing
+              Powered by Brave Search
             </span>
             <span className="text-[9px] text-muted-foreground/60">
-              Search results generated with Bing Search API
+              Search results generated with Brave Search API
             </span>
           </div>
         </div>

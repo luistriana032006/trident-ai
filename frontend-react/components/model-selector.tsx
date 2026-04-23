@@ -398,14 +398,14 @@ export function ModelSelector() {
                   </div>
                   <p className="max-w-md text-center text-sm leading-relaxed text-muted-foreground">
                     {selected.id === "entity" &&
-                      "Optimized for entity recognition, classification, and structured data extraction. References powered by Bing Search."}
+                      "Optimized for entity recognition, classification, and structured data extraction. References powered by Brave Search."}
                     {selected.id === "search" &&
-                      "Designed for semantic search, document retrieval, and contextual understanding. References powered by Bing Search."}
+                      "Designed for semantic search, document retrieval, and contextual understanding. References powered by Brave Search."}
                     {selected.id === "local" &&
                       "High-capacity reasoning for complex tasks, code generation, and advanced inference. Fully offline."}
                   </p>
 
-                  {/* Bing badge for search/entity */}
+                  {/* Brave badge for search/entity */}
                   {showsReferences && (
                     <div className="flex items-center gap-2 rounded-full border border-border/50 bg-secondary/40 px-3 py-1.5">
                       <svg
@@ -414,17 +414,17 @@ export function ModelSelector() {
                         fill="none"
                       >
                         <path
-                          d="M5 3v16.5l4.67-2.25 5.33 3.25 4-2V5.5L15 8.5l-5.33-3.25L5 3z"
-                          fill={selected.accentColor}
-                          opacity="0.8"
+                          d="M12 2L4 5.5v5c0 4.5 3.4 8.7 8 9.5 4.6-.8 8-5 8-9.5v-5L12 2z"
+                          fill="#FB542B"
                         />
                         <path
-                          d="M5 3l4.67 2.25v11L5 19.5V3z"
-                          fill={selected.accentColor}
+                          d="M10 8h4v1.5l-.8 3H10.8L10 9.5V8z"
+                          fill="white"
+                          opacity="0.9"
                         />
                       </svg>
                       <span className="text-[10px] font-medium text-muted-foreground">
-                        Powered by Microsoft Bing Search
+                        Powered by Brave Search
                       </span>
                     </div>
                   )}
@@ -479,7 +479,7 @@ export function ModelSelector() {
                               }}
                             />
                             <span>
-                              {msg.references.length} sources from Bing
+                              {msg.references.length} sources from Brave
                               Search
                             </span>
                             <svg
@@ -488,13 +488,13 @@ export function ModelSelector() {
                               fill="none"
                             >
                               <path
-                                d="M5 3v16.5l4.67-2.25 5.33 3.25 4-2V5.5L15 8.5l-5.33-3.25L5 3z"
-                                fill={msgModel?.accentColor}
-                                opacity="0.8"
+                                d="M12 2L4 5.5v5c0 4.5 3.4 8.7 8 9.5 4.6-.8 8-5 8-9.5v-5L12 2z"
+                                fill="#FB542B"
                               />
                               <path
-                                d="M5 3l4.67 2.25v11L5 19.5V3z"
-                                fill={msgModel?.accentColor}
+                                d="M10 8h4v1.5l-.8 3H10.8L10 9.5V8z"
+                                fill="white"
+                                opacity="0.9"
                               />
                             </svg>
                           </button>
@@ -524,7 +524,7 @@ export function ModelSelector() {
                         {selected.name}
                         {showsReferences && (
                           <span className="ml-2 text-muted-foreground/60">
-                            Searching Bing...
+                            Searching Brave...
                           </span>
                         )}
                       </span>
