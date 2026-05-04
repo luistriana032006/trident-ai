@@ -566,6 +566,7 @@ export function ModelSelector() {
               isLoading={isLoading}
               modelName={selected.modelName}
               modelAccent={selected.accentColor}
+              placeholder={selectedModel === "entity" ? "Enter a person's name... (e.g. Albert Einstein)" : undefined}
             />
           </div>
         </main>

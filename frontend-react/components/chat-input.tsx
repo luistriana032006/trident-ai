@@ -9,9 +9,10 @@ interface ChatInputProps {
   isLoading?: boolean
   modelName: string
   modelAccent: string
+  placeholder?: string
 }
 
-export function ChatInput({ onSend, isLoading, modelName, modelAccent }: ChatInputProps) {
+export function ChatInput({ onSend, isLoading, modelName, modelAccent, placeholder }: ChatInputProps) {
   const [message, setMessage] = useState("")
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -54,7 +55,7 @@ export function ChatInput({ onSend, isLoading, modelName, modelAccent }: ChatInp
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={`Message ${modelName}...`}
+          placeholder={placeholder ?? `Message ${modelName}...`}
           rows={1}
           className={cn(
             "w-full resize-none bg-transparent px-5 pt-4 pb-2 text-sm text-foreground",

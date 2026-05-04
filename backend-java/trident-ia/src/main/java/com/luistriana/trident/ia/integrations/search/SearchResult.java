@@ -1,4 +1,4 @@
-package com.luistriana.trident.ia.integrations;
+package com.luistriana.trident.ia.integrations.search;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,0 +1,22 @@
+package com.luistriana.trident.ia.integrations.Entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class WikiDataEntityResult {
+    private WikiDataFieldValue nombreCompleto;
+
+
+    private WikiDataFieldValue fechaDeNacimiento;
+
+    private WikiDataFieldValue fechaDeMuerte;
+
+    private WikiDataFieldValue ocupacion;
+
+    private WikiDataFieldValue pais;
+
+}

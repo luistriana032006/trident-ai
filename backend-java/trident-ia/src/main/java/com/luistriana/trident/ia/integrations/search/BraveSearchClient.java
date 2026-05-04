@@ -1,4 +1,4 @@
-package com.luistriana.trident.ia.integrations;
+package com.luistriana.trident.ia.integrations.search;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
