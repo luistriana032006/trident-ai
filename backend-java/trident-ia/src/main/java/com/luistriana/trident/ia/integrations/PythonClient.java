@@ -14,14 +14,10 @@ import org.springframework.stereotype.Component;
 public class PythonClient {
     private final WebClient webClient;
 
-    public Mono<ChatResponse> sendChat(@lombok.NonNull PythonRequest request) {
-
+    public Mono<ChatResponse> sendChat(PythonRequest request) {
         return webClient.post()
                 .uri("/chat")
                 .bodyValue(request)
                 .retrieve().bodyToMono(ChatResponse.class);
     }
-
-    // llamada a la url de la api key de brave
-   
 }

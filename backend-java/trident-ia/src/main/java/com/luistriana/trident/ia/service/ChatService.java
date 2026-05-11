@@ -3,11 +3,12 @@ package com.luistriana.trident.ia.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.luistriana.trident.ia.exception.ServiceUnavailableException;
+
 import org.springframework.stereotype.Service;
 
 import com.luistriana.trident.ia.integrations.PythonClient;
 import com.luistriana.trident.ia.integrations.PythonRequest;
-import com.luistriana.trident.ia.integrations.Entity.WikiDataEntityResult;
 import com.luistriana.trident.ia.integrations.Entity.WikidataCLient;
 import com.luistriana.trident.ia.integrations.search.BraveSearchClient;
 import com.luistriana.trident.ia.integrations.search.SearchResult;
@@ -27,28 +28,32 @@ public class ChatService {
     private final PythonClient pythonClient;
     private final BraveSearchClient braveClient;
     private final WikidataCLient wikiClient;
-    
+
     public Mono<ChatResponse> sendLocal(ChatRequest request) {
         PythonRequest pythonRequest = new PythonRequest(Mode.LOCAL, request.getPrompt());
-        return pythonClient.sendChat(pythonRequest);
+        return pythonClient.sendChat(pythonRequest)
+                .onErrorMap(e -> new ServiceUnavailableException("python", e.getMessage()));
     }
 
     public Mono<ChatResponse> sendEntity(ChatRequest request) {
-       // PythonRequest pythonRequest = new PythonRequest(Mode.ENTITY, request.getPrompt());
+        // PythonRequest pythonRequest = new PythonRequest(Mode.ENTITY,
+        // request.getPrompt());
         // return pythonClient.sendChat(pythonRequest);
-       return wikiClient.search(request.getPrompt())
-        .flatMap(entity -> {
-            String context = "nombre: "+entity.getNombreCompleto().getValue() + "\n" +
-            "nacimiento: " + entity.getFechaDeNacimiento().getValue() +"\n" +
-            "muerte: " + entity.getFechaDeMuerte().getValue() + "\n" +
-            "pais: " + entity.getPais().getValue() + "\n" + 
-            "ocupacion: " + entity.getOcupacion().getValue(); 
-            
+        return wikiClient.search(request.getPrompt())
+                .onErrorMap(e -> new ServiceUnavailableException("wikidata", e.getMessage()))
+                .flatMap(entity -> {
+                    String context = "nombre: " + entity.getNombreCompleto().getValue() + "\n" +
+                            "nacimiento: " + entity.getFechaDeNacimiento().getValue() + "\n" +
+                            "muerte: " + entity.getFechaDeMuerte().getValue() + "\n" +
+                            "pais: " + entity.getPais().getValue() + "\n" +
+                            "ocupacion: " + entity.getOcupacion().getValue();
 
-              String enrichedPrompt = "Usa esta información:\n" + context + "\n\nPregunta: "+request.getPrompt();
-              PythonRequest pythonRequest = new PythonRequest(Mode.ENTITY, enrichedPrompt);
-              return pythonClient.sendChat(pythonRequest);
-            });
+                    String enrichedPrompt = "Usa esta información:\n" + context + "\n\nPregunta: "
+                            + request.getPrompt();
+                    PythonRequest pythonRequest = new PythonRequest(Mode.ENTITY, enrichedPrompt);
+                    return pythonClient.sendChat(pythonRequest)
+                            .onErrorMap(e -> new ServiceUnavailableException("python", e.getMessage()));
+                });
 
     }
 
@@ -58,6 +63,7 @@ public class ChatService {
         // return pythonClient.sendChat(pythonRequest);
 
         return braveClient.search(request.getPrompt())
+        .onErrorMap(e-> new ServiceUnavailableException("search",e.getMessage()))
                 .flatMap(braveResponse -> {
                     List<SearchResult> results = braveResponse.getWeb().getResults();
                     String context = results.stream()
@@ -67,8 +73,8 @@ public class ChatService {
                     String enrichedPrompt = "Usa esta información:\n" + context + "\n\nPregunta: "
                             + request.getPrompt();
                     PythonRequest pythonRequest = new PythonRequest(Mode.SEARCH, enrichedPrompt);
-                    return pythonClient.sendChat(pythonRequest);
-
+                    return pythonClient.sendChat(pythonRequest)
+                    .onErrorMap(e -> new ServiceUnavailableException("python", e.getMessage()));
                 });
     }
 

@@ -16,7 +16,7 @@ public class WikidataCLient {
 
     private final WebClient sparqlClient = WebClient.create("https://query.wikidata.org");
 
-    public Mono<WikiDataEntityResult> search(@lombok.NonNull String query) {
+    public Mono<WikiDataEntityResult> search(String query) {
 
         return webClient.get()
                 .uri(uribilder -> uribilder.path("/w/api.php")

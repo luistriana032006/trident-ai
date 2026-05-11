@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { ArrowUp, Paperclip, Mic, Square } from "lucide-react"
+import { ArrowUp, Paperclip, Mic } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface ChatInputProps {
@@ -92,25 +92,21 @@ export function ChatInput({ onSend, isLoading, modelName, modelAccent, placehold
             </span>
             <button
               onClick={handleSubmit}
-              disabled={!message.trim() && !isLoading}
+              disabled={isLoading || !message.trim()}
               className={cn(
                 "flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-200",
-                message.trim() || isLoading
+                !isLoading && message.trim()
                   ? "text-primary-foreground shadow-lg"
                   : "cursor-not-allowed bg-secondary text-muted-foreground/40"
               )}
               style={
-                message.trim() || isLoading
+                !isLoading && message.trim()
                   ? { backgroundColor: modelAccent, boxShadow: `0 0 20px ${modelAccent}40` }
                   : undefined
               }
-              aria-label={isLoading ? "Stop generation" : "Send message"}
+              aria-label="Send message"
             >
-              {isLoading ? (
-                <Square className="h-4 w-4" />
-              ) : (
-                <ArrowUp className="h-4 w-4" />
-              )}
+              <ArrowUp className="h-4 w-4" />
             </button>
           </div>
         </div>
